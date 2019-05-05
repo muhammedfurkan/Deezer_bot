@@ -25,9 +25,10 @@ async def only_admin_handler(message: types.Message):
 
 async def quality_setting_handler(message: types.Message):
     if message.chat.id in config.admins:
+        current_setting = await db_utils.get_quality_setting(message.chat.id)
         return await bot.send_message(
             message.chat.id, 'Select quality',
-            reply_markup=inline_keyboards.quality_settings_keyboard('MP3_320'))
+            reply_markup=inline_keyboards.quality_settings_keyboard(current_setting))
 
 
 async def soundcloud_handler(message: types.Message):
