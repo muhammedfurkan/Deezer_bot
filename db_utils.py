@@ -2,14 +2,23 @@ from var import var
 
 
 async def get_track(track_id, quality='mp3'):
-	track = await var.conn.execute('get', f'track:deezer:{track_id}:{quality}')
-	return track
+	return await var.conn.execute('get', f'track:deezer:{track_id}:{quality}')
 
 
 async def add_track(track_id, file_id, quality='mp3'):
 	await var.conn.execute('set', f'track:deezer:{track_id}:{quality}', file_id)
-	await var.conn.execute('incr', 'tracks_total')
-	print(f'{track_id} - {file_id}')
+	await var.conn.execute('incr', 'tracks:soundcloud:total')
+	print(f'dz:{track_id} - {file_id}')
+
+
+async def get_sc_track(track_id):
+	return await var.conn.execute('get', f'track:soundcloud:{track_id}')
+
+
+async def add_sc_track(track_id, file_id):
+	await var.conn.execute('set', f'track:soundcloud:{track_id}', file_id)
+	await var.conn.execute('incr', 'tracks:soundcloud:total')
+	print(f'sc:{track_id} - {file_id}')
 
 
 async def get_quality_setting(user_id):

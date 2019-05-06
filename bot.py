@@ -37,6 +37,9 @@ def register_handlers(dp, handlers, inline_handlers, callback_handlers):
     dp.register_message_handler(
         handlers.soundcloud_handler,
         commands=['sc'])
+    dp.register_message_handler(
+        handlers.soundcloud_link_handler,
+        lambda m: 'soundcloud.com' in m.text)
     dp.register_callback_query_handler(
         callback_handlers.soundcloud_handler,
         lambda c: c.data.startswith('sc_'))

@@ -39,6 +39,12 @@ async def soundcloud_handler(message: types.Message):
         reply_markup=inline_keyboards.soundcloud_keyboard(search_results, 1))
 
 
+async def soundcloud_link_handler(message: types.Message):
+    url = utils.clear_link(message)
+    track = await soundcloud_api.get_track(url=url)
+    await methods.send_soundcloud_track(message.chat.id, track)
+
+
 async def audio_file_handler(message: types.Message):
     if message.caption and message.chat.id in config.admins:
         await db_utils.add_track(int(message.caption), message.audio.file_id)

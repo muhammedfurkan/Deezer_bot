@@ -166,25 +166,22 @@ def add_tags(path, track, album, image, lyrics):
     tag.save()
 
 
-def sc_add_tags(path, track, image):
+def sc_add_tags(path, track, image, lyrics=None):
     try:
         album_title = track['publisher_metadata']['album_title']
     except KeyError:
         album_title = ''
 
-    tags = {
-        'title': track.title,
-        'album': album_title,
-        'artist': track.artist,
-        'date': track.created_at.split('T')[0],
-        'genre': track.get('genre', '')
-    }
-
-    handle = MP3(path, ID3=EasyID3)
-    handle.delete()
-    EasyID3.RegisterTextKey("albumart", "APIC")
-    handle["albumart"] = mutagen.id3.APIC(data=image)
-
-    for key, val in tags.items():
-        handle[key] = str(val)
-    handle.save()
+    tag = id3.Tag()
+    tag.parse(path)
+    tag.title = track.title
+    tag.artist = track.artist
+    tag.album = album_title
+    tag.album_artist = track.artist if album_title else ''
+    tag.original_release_date = track.created_at.split('T')[0]
+    tag.non_std_genre = track.get('genre', '')
+    if lyrics:
+        tag.lyrics.set(lyrics)
+    tag.images.set(
+        type_=3, img_data=image, mime_type='image/png')
+    tag.save()
