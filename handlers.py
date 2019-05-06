@@ -33,7 +33,7 @@ async def quality_setting_handler(message: types.Message):
 
 async def soundcloud_handler(message: types.Message):
     query = message.text.strip('/sc ')
-    search_results = await soundcloud_api.search(query)
+    search_results = await soundcloud_api.search(query, limit=50)
     return await bot.send_message(
         chat_id=message.chat.id, text=f'{query}:',
         reply_markup=inline_keyboards.soundcloud_keyboard(search_results, 1))
