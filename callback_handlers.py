@@ -14,6 +14,7 @@ from utils import parse_callback
 
 
 async def soundcloud_handler(callback):
+    await callback.answer()
     if callback.data.startswith('sc_track'):
         track_id = callback.data.split(':')[1]
         await methods.send_sc_track(track_id, callback.message.chat.id)
