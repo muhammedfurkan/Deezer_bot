@@ -64,8 +64,9 @@ async def stats_callback_handler(callback):
     dz_tracks_count = await var.conn.execute('get', 'tracks:deezer:total')
     all_users_count = db_utils.get_users_count()
     with suppress(exceptions.MessageNotModified):
-        await bot.send_message(
+        await bot.edit_message_text(
             chat_id=callback.message.chat.id,
+            message_id=callback.message.message_id,
             text=f'users: {all_users_count}\n\n'
                 f'Deezer tracks: {dz_tracks_count}\n\nSoundCloud tracks:{sc_tracks_count}',
             reply_markup=inline_keyboards.stats_keyboard())
