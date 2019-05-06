@@ -41,9 +41,11 @@ class SoundCloudTrack(AttrDict):
         else:
             os.makedirs(filepath.rsplit('/', 1)[0], exist_ok=True)
 
+        print(f'[Soundcloud]Start downloading: {self.id} | {self.artist} - {self.title}')
         await download_file(await self.download_url(), filepath)
         cover = await get_file(self.artwork_url)
         sc_add_tags(filepath, self, cover)
+        print(f'[Soundcloud]Finished downloading: {self.id} | {self.artist} - {self.title}')
         return filepath
 
     @property
