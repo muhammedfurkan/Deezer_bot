@@ -63,11 +63,13 @@ async def start_command_handler(message: types.Message):
 
 
 async def getstats_handler(message):
-    tracks_count = await var.conn.execute('get', 'tracks_total')
+    sc_tracks_count = await var.conn.execute('get', 'tracks:soundcloud:total')
+    dz_tracks_count = await var.conn.execute('get', 'tracks:deezer:total')
     all_users_count = db_utils.get_users_count()
     await bot.send_message(
         chat_id=message.chat.id,
-        text=f'users: {all_users_count}\n\ntracks: {tracks_count}',
+        text=f'users: {all_users_count}\n\n'
+            f'Deezer tracks: {dz_tracks_count}\n\nSoundCloud tracks:{sc_tracks_count}',
         reply_markup=inline_keyboards.stats_keyboard())
 
 
