@@ -36,7 +36,8 @@ def random_string(length=10):
 def clear_link(message):
     for entity in message.entities:
         if entity.type == 'url':
-            return entity.url
+            return entity.url \
+                or message.text[entity.offset : entity.offset + entity.length]
 
 
 def split_string(text):
