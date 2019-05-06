@@ -37,7 +37,6 @@ def clear_link(message):
     for entity in message.entities:
         if entity.type == 'url':
             return entity.url
-    return None
 
 
 def split_string(text):

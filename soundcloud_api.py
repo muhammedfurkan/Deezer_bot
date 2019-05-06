@@ -70,7 +70,7 @@ async def get_track(track_id=None, url=None):
         req = await var.session.get(
             api + f'/tracks/{track_id}',
             params={'client_id': soundcloud_client})
-    elif url:
+    else:
         req = await var.session.get(
             api + f'/resolve',
             params={'url': url, 'client_id': soundcloud_client})
