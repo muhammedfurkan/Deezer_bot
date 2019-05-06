@@ -29,7 +29,7 @@ class Spotify_API:
 		self.token = json['access_token']
 		self.expires_in = time() + json['expires_in']
 
-	async def restart(self):
+	def restart(self):
 		self.__init__(self.client, self.secret)
 
 	async def search(self, query, obj_type='track', limit=5):
@@ -58,7 +58,7 @@ class Spotify_API:
 			f'https://api.spotify.com/v1/tracks/{track_id}',
 			headers={'Authorization': f'Bearer {self.token}'})
 		print(r.url)
-		json = await r.json()
+		json = await r.json(content_type=None)
 		try:
 			json['error']
 		except KeyError:
@@ -76,7 +76,7 @@ class Spotify_API:
 			f'https://api.spotify.com/v1/playlists/{playlist_id}/tracks',
 			headers={'Authorization': f'Bearer {self.token}'})
 		print(r.url)
-		json = await r.json()
+		json = await r.json(content_type=None)
 		if not json.get('error'):
 			return [AttrDict(track['track']) for track in json['items']]
 		else:
@@ -91,7 +91,7 @@ class Spotify_API:
 			f'https://api.spotify.com/v1/albums/{album_id}',
 			headers={'Authorization': f'Bearer {self.token}'})
 		print(r.url)
-		json = await r.json()
+		json = await r.json(content_type=None)
 		if not json.get('error'):
 			return AttrDict(json)
 		else:
@@ -107,7 +107,7 @@ class Spotify_API:
 			f'https://api.spotify.com/v1/artists/{artist_id}',
 			json={'Authorization': f'Bearer {self.token}'})
 		print(r.url)
-		json = await r.json()
+		json = await r.json(content_type=None)
 		if not json.get('error'):
 			return AttrDict(json)
 		else:
