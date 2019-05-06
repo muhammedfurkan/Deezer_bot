@@ -178,7 +178,7 @@ def sc_add_tags(path, track, image, lyrics=None):
     tag.artist = track.artist
     tag.album = album_title
     tag.album_artist = track.artist if album_title else ''
-    tag.original_release_date = track.created_at.split('T')[0]
+    tag.original_release_date = track.created_at.split('T')[0].split(' ')[0]
     tag.non_std_genre = track.get('genre', '')
     if lyrics:
         tag.lyrics.set(lyrics)
