@@ -6,8 +6,8 @@ async def get_track(track_id, quality='mp3'):
 
 
 async def add_track(track_id, file_id, quality='mp3'):
-	await var.conn.execute('set', f'track:soundcloud:{track_id}:{quality}', file_id)
-	await var.conn.execute('incr', 'tracks:soundcloud:total')
+	await var.conn.execute('set', f'track:deezer:{track_id}:{quality}', file_id)
+	await var.conn.execute('incr', 'tracks:deezer:total')
 	print(f'dz:{track_id} - {file_id}')
 
 
