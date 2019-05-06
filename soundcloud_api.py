@@ -37,7 +37,7 @@ class SoundCloudTrack(AttrDict):
     async def download(self, filepath=None):
         if not filepath:
             os.makedirs(f'downloads/{self.id}', exist_ok=True)
-            filepath = f'downloads/{self.id}/{self.user.username} - {self.title}.mp3'.replace('/', '_')
+            filepath = f'downloads/{self.id}/ ' + '{self.user.username} - {self.title}.mp3'.replace('/', '_')
         else:
             os.makedirs(filepath.rsplit('/', 1)[0], exist_ok=True)
 
