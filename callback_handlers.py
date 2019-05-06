@@ -68,7 +68,7 @@ async def stats_callback_handler(callback):
             chat_id=callback.message.chat.id,
             message_id=callback.message.message_id,
             text=f'users: {all_users_count}\n\n'
-                f'Deezer tracks: {dz_tracks_count}\n\nSoundCloud tracks:{sc_tracks_count}',
+                f'Deezer tracks: {dz_tracks_count}\n\nSoundCloud tracks: {sc_tracks_count}',
             reply_markup=inline_keyboards.stats_keyboard())
 
 

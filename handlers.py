@@ -69,7 +69,7 @@ async def getstats_handler(message):
     await bot.send_message(
         chat_id=message.chat.id,
         text=f'users: {all_users_count}\n\n'
-            f'Deezer tracks: {dz_tracks_count}\n\nSoundCloud tracks:{sc_tracks_count}',
+            f'Deezer tracks: {dz_tracks_count}\n\nSoundCloud tracks: {sc_tracks_count}',
         reply_markup=inline_keyboards.stats_keyboard())
 
 
