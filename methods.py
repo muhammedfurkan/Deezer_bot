@@ -174,16 +174,6 @@ async def cache(track):
 		print(f'skipping track {track.artist.name} - {track.title} - {file_id}')
 
 
-async def send_sc_track(track_id, chat_id):
-	track = await soundcloud_api.get_track(track_id)
-	path = await track.download()
-	with open(path, 'rb') as f:
-		await bot.send_audio(
-			chat_id=chat_id, audio=f,
-			performer=track.artist, title=track.title)
-	os.remove(path)
-
-
 async def send_soundcloud_track(chat_id, track):
 	file_id = await db_utils.get_sc_track(track.id)
 	if file_id:

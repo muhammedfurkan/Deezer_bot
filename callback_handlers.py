@@ -17,7 +17,7 @@ async def soundcloud_handler(callback):
     await callback.answer()
     if callback.data.startswith('sc_track'):
         track_id = callback.data.split(':')[1]
-        await methods.send_sc_track(track_id, callback.message.chat.id)
+        await methods.send_soundcloud_track(track_id, callback.message.chat.id)
     else:
         query = callback.message.text[:-1]
         results = await soundcloud_api.search(query)
