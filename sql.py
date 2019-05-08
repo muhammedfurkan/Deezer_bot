@@ -1,15 +1,6 @@
 import sqlite3
 
 
-"""
-INTEGER: A signed integer up to 8 bytes depending on the magnitude of the value.
-REAL: An 8-byte floating point value.
-TEXT: A text string, typically UTF-8 encoded (depending on the database encoding).
-BLOB: A blob of data (binary large object) for storing binary data.
-NULL: A NULL value, represents missing data or an empty cell.
-"""
-
-
 class database:
 	def __init__(self, file):
 		self.conn = sqlite3.connect(file)
