@@ -15,10 +15,9 @@ from utils import parse_callback
 
 async def soundcloud_handler(callback):
     await callback.answer()
-    if callback.data.startswith('sc_track'):
-        track_id = callback.data.split(':')[1]
-        track = await soundcloud_api.get_track(track_id)
-        await methods.send_soundcloud_track(callback.message.chat.id, track)
+    track_id = callback.data.split(':')[1]
+    track = await soundcloud_api.get_track(track_id)
+    await methods.send_soundcloud_track(callback.message.chat.id, track)
 
 
 async def finish_download_handler(data):
@@ -52,6 +51,10 @@ async def pages_handler(callback):
             reply_markup=inline_keyboards.search_results_keyboard(search_results, int(page)))
     elif mode == 'sc_page':
         search_results = await soundcloud_api.search(q=q)
+        await bot.edit_message_reply_markup(
+            chat_id=callback.message.chat.id,
+            message_id=callback.message.message_id,
+            reply_markup=inline_keyboards.sc_search_results_keyboard(search_results, int(page)))
 
 
 async def stats_callback_handler(callback):

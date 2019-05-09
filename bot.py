@@ -7,7 +7,6 @@ from sys import argv
 import aiohttp
 import aioredis
 from aiogram import Bot, types
-from aiogram.utils.callback_data import CallbackData
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher import Dispatcher
 
@@ -19,10 +18,6 @@ from sql import database
 from var import var
 
 loop = asyncio.get_event_loop()
-
-bot = Bot(token=config.bot_token, loop=loop)
-storage = MemoryStorage()
-var.downloading = {}
 
 
 def register_handlers(dp, handlers, inline_handlers, callback_handlers):
@@ -38,7 +33,7 @@ def register_handlers(dp, handlers, inline_handlers, callback_handlers):
         lambda m: 'soundcloud.com' in m.text)
     dp.register_callback_query_handler(
         callback_handlers.soundcloud_handler,
-        lambda c: c.data.startswith('sc_'))
+        lambda c: c.data.startswith('sc_track'))
     dp.register_message_handler(handlers.start_command_handler, commands=['start'])
     dp.register_message_handler(handlers.quality_setting_handler, commands=['quality'])
     dp.register_message_handler(
@@ -126,6 +121,10 @@ try:
         'Connection': 'keep-alive',
     }
 
+    bot = Bot(token=config.bot_token, loop=loop)
+    storage = MemoryStorage()
+    dp = Dispatcher(bot, storage=storage)
+    var.downloading = {}
     var.session = aiohttp.ClientSession(
         cookies=cookies, headers=headers, raise_for_status=False)
     var.session.get = utils.retry(
@@ -136,7 +135,6 @@ try:
     var.CSRFToken = None
     var.loop = loop
 
-    dp = Dispatcher(bot, storage=storage)
     from spotify import Spotify_API
     var.spot = Spotify_API(
             config.spotify_client, config.spotify_secret)
