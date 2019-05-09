@@ -64,7 +64,7 @@ async def inline_handler(query):
 					title=f'⏳{result.title}',
 					performer=result.artist.name,
 					audio_duration=30,
-					reply_markup=inline_keyboards.finish_download_keyboard(result.id)))
+					reply_markup=inline_keyboards.finish_download_keyboard)
 
 	if offset + 6 < len(search_results):
 			next_offset = str(offset + 5)

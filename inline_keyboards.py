@@ -5,6 +5,27 @@ from yarl import URL
 from utils import new_callback
 
 
+finish_download_keyboard = InlineKeyboardMarkup(1)
+finish_download_keyboard.insert(InlineKeyboardButton(
+    'Loading full track, please wait...', callback_data='finish_download'))
+
+start_keyboard = InlineKeyboardMarkup(1)
+start_keyboard.insert(InlineKeyboardButton('Search', switch_inline_query_current_chat=''))
+start_keyboard.insert(InlineKeyboardButton('Search albums', switch_inline_query_current_chat='.a '))
+start_keyboard.insert(InlineKeyboardButton('Search artists', switch_inline_query_current_chat='.ar '))
+
+large_file_keyboard = InlineKeyboardMarkup(1)
+large_file_keyboard.insert(InlineKeyboardButton(
+    "File is too big, Telegram won't let to upload it",
+    callback_data='big_file'))
+
+stats_keyboard = InlineKeyboardMarkup()
+stats_keyboard.insert(InlineKeyboardButton('Update', callback_data='stats'))
+
+today_stats_keyboard = InlineKeyboardMarkup()
+today_stats_keyboard.insert(InlineKeyboardButton('Update', callback_data='today'))
+
+
 def soundcloud_keyboard(results, page, per_page=5):
     kb = InlineKeyboardMarkup(2)
     total_pages = ceil(len(results) / per_page)
@@ -28,14 +49,6 @@ def soundcloud_keyboard(results, page, per_page=5):
     return kb
 
 
-def large_file_keyboard():
-    kb = InlineKeyboardMarkup(1)
-    kb.insert(InlineKeyboardButton(
-        "File is too big, Telegram won't let to upload it",
-        callback_data='big_file'))
-    return kb
-
-
 def quality_settings_keyboard(current_setting):
     kb = InlineKeyboardMarkup(2)
     mp3 = ' (current)' if current_setting == 'mp3' else ''
@@ -46,21 +59,6 @@ def quality_settings_keyboard(current_setting):
     kb.insert(InlineKeyboardButton(
         "FLAC" + flac,
         callback_data='quality:flac'))
-    return kb
-
-
-def finish_download_keyboard(track_id):
-    kb = InlineKeyboardMarkup(1)
-    kb.insert(InlineKeyboardButton(
-        'Loading full track, please wait...', callback_data='finish_download'))
-    return kb
-
-
-def start_keyboard():
-    kb = InlineKeyboardMarkup(1)
-    kb.insert(InlineKeyboardButton('Search', switch_inline_query_current_chat=''))
-    kb.insert(InlineKeyboardButton('Search albums', switch_inline_query_current_chat='.a '))
-    kb.insert(InlineKeyboardButton('Search artists', switch_inline_query_current_chat='.ar '))
     return kb
 
 
@@ -84,18 +82,6 @@ def search_results_keyboard(results, page, per_page=5):
     kb.row(
         InlineKeyboardButton(text='Deezer ✅', callback_data=new_callback('page', 1)),
         InlineKeyboardButton(text='SoundCloud ☑️', callback_data=new_callback('sc_page', 1)))
-    return kb
-
-
-def stats_keyboard():
-    kb = InlineKeyboardMarkup()
-    kb.insert(InlineKeyboardButton('Update', callback_data='stats'))
-    return kb
-
-
-def today_stats_keyboard():
-    kb = InlineKeyboardMarkup()
-    kb.insert(InlineKeyboardButton('Update', callback_data='today'))
     return kb
 
 

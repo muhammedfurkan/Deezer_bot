@@ -59,7 +59,7 @@ async def start_command_handler(message: types.Message):
         text=config.start_message,
         disable_web_page_preview=True,
         parse_mode=types.ParseMode.MARKDOWN,
-        reply_markup=inline_keyboards.start_keyboard())
+        reply_markup=inline_keyboards.start_keyboard)
 
 
 async def getstats_handler(message):
@@ -70,7 +70,7 @@ async def getstats_handler(message):
         chat_id=message.chat.id,
         text=f'users: {all_users_count}\n\n'
             f'Deezer tracks: {dz_tracks_count}\n\nSoundCloud tracks: {sc_tracks_count}',
-        reply_markup=inline_keyboards.stats_keyboard())
+        reply_markup=inline_keyboards.stats_keyboard)
 
 
 async def today_stats_handler(message):
@@ -80,7 +80,7 @@ async def today_stats_handler(message):
         text=f'Downloaded tracks: {stats.downloaded_tracks}\n\n'
         f'Sent tracks: {stats.sent_tracks}\n\n'
         f'Received messages: {stats.received_messages}',
-        reply_markup=inline_keyboards.today_stats_keyboard())
+        reply_markup=inline_keyboards.today_stats_keyboard)
 
 
 async def redownload_handler(message: types.Message):
