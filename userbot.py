@@ -28,18 +28,17 @@ async def start():
     await client.start()
 
 
-async def post_large_track(path, track, quality='mp3'):
-    msg = await client.send_audio(
-        chat_id=-1001246220493, audio=path, duration=track.duration,
-        title=track.title, performer=track.artist.name)
-
-    # msg = await client.send_file(-1001246220493, path,
-    #                              part_size_kb=512, attributes=[DocumentAttributeAudio(
-    #                                  voice=None,
-    #                                  duration=track.duration,
-    #                                  title=track.title,
-    #                                  performer=track.artist.name)])
-    await db_utils.add_track(track.id, msg.audio.file_id, quality)
+async def post_large_track(path, track, quality='mp3', provider='deezer'):
+    if provider == 'deezer':
+        msg = await client.send_audio(
+            chat_id=-1001246220493, audio=path, duration=track.duration,
+            title=track.title, performer=track.artist.name)
+        await db_utils.add_track(track.id, msg.audio.file_id, quality)
+    elif provider == 'soundcloud':
+        msg = await client.send_audio(
+            chat_id=-1001246220493, audio=path, duration=track.duration,
+            title=track.title, performer=track.artist)
+        await db_utils.add_sc_track(track.id, msg.audio.file_id)
 
 
 async def test():

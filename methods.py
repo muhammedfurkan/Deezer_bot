@@ -54,7 +54,7 @@ async def finish_download(track, inline_message_id, user):
 	if (os.path.getsize(path) >> 20) > 50:
 		await bot.edit_message_reply_markup(
 			inline_message_id=inline_message_id,
-			reply_markup=inline_keyboards.large_file_keyboard())
+			reply_markup=inline_keyboards.large_file_keyboard)
 		await post_large_track(path, track)
 		file_id = await db_utils.get_track(track.id)
 	else:
@@ -179,6 +179,11 @@ async def send_soundcloud_track(chat_id, track):
 	if file_id:
 		return await bot.send_audio(chat_id, file_id)
 	path = await track.download()
+	if (os.path.getsize(path) >> 20) > 50:
+		await post_large_track(path, track, provider='soundcloud')
+		file_id = await db_utils.get_sc_track(track.id)
+		return await bot.send_message(chat_id, file_id)
+
 	await bot.send_chat_action(chat_id, 'upload_audio')
 	msg = await bot.send_audio(
 		chat_id=chat_id,
