@@ -33,10 +33,6 @@ def register_handlers(dp, handlers, inline_handlers, callback_handlers):
     dp.register_message_handler(
         handlers.audio_file_handler,
         content_types=[types.ContentType.AUDIO])
-    # SoundCloud
-    dp.register_message_handler(
-        handlers.soundcloud_handler,
-        commands=['sc'])
     dp.register_message_handler(
         handlers.soundcloud_link_handler,
         lambda m: 'soundcloud.com' in m.text)
