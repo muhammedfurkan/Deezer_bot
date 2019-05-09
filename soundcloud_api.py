@@ -63,7 +63,7 @@ async def search(q, limit=200, **params):
         api_v2 + '/search/tracks',
         params={
             'q': q, 'client_id': soundcloud_client,
-            'limit': limit **params})
+            'limit': limit, **params})
     result = (await req.json())['collection']
     return [SoundCloudTrack(track) for track in result]
 
