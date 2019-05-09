@@ -13,7 +13,7 @@ def soundcloud_keyboard(results, page, per_page=5):
     last_page = page == total_pages
     for i, result in enumerate(results[start : stop], start=start):
         kb.insert(InlineKeyboardButton(
-            f'{i+1}. {result.user.username} - {result.title}',
+            f'{i+1}. {result.artist} - {result.title}',
             callback_data=new_callback('sc_track', result.id, 'send')))
         kb.row()
     if page != 1:
@@ -22,6 +22,9 @@ def soundcloud_keyboard(results, page, per_page=5):
     if not last_page:
         kb.insert(InlineKeyboardButton(
             '️️▶️', callback_data=new_callback('sc_page', page+1)))
+    kb.row(
+        InlineKeyboardButton(text='Deezer ☑️', callback_data=new_callback('page', 1)),
+        InlineKeyboardButton(text='SoundCloud ✅', callback_data=new_callback('sc_page', 1)))
     return kb
 
 
@@ -78,6 +81,9 @@ def search_results_keyboard(results, page, per_page=5):
     if not last_page:
         kb.insert(InlineKeyboardButton(
             '️️▶️', callback_data=new_callback('page', page+1)))
+    kb.row(
+        InlineKeyboardButton(text='Deezer ✅', callback_data=new_callback('page', 1)),
+        InlineKeyboardButton(text='SoundCloud ☑️', callback_data=new_callback('sc_page', 1)))
     return kb
 
 
