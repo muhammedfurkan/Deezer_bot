@@ -19,13 +19,6 @@ async def soundcloud_handler(callback):
         track_id = callback.data.split(':')[1]
         track = await soundcloud_api.get_track(track_id)
         await methods.send_soundcloud_track(callback.message.chat.id, track)
-    else:
-        query = callback.message.text[:-1]
-        results = await soundcloud_api.search(query)
-        page = int(callback.data.split(':')[1])
-        await bot.edit_message_reply_markup(
-            chat_id=callback.message.chat.id, message_id=callback.message.message_id,
-            reply_markup=inline_keyboards.soundcloud_keyboard(results, page))
 
 
 async def finish_download_handler(data):
@@ -49,13 +42,16 @@ async def quality_setting_hanlder(callback):
 
 async def pages_handler(callback):
     await callback.answer()
-    _, page = parse_callback(callback.data)
+    mode, page = parse_callback(callback.data)
     q = callback.message.text[:-1]
-    search_results = await deezer_api.search(q=q)
-    await bot.edit_message_reply_markup(
-        chat_id=callback.message.chat.id,
-        message_id=callback.message.message_id,
-        reply_markup=inline_keyboards.search_results_keyboard(search_results, int(page)))
+    if mode == 'page':
+        search_results = await deezer_api.search(q=q)
+        await bot.edit_message_reply_markup(
+            chat_id=callback.message.chat.id,
+            message_id=callback.message.message_id,
+            reply_markup=inline_keyboards.search_results_keyboard(search_results, int(page)))
+    elif mode == 'sc_page':
+        search_results = await soundcloud_api.search(q=q)
 
 
 async def stats_callback_handler(callback):
@@ -85,10 +81,6 @@ async def today_stats_callback_handler(callback):
             message_id=callback.message.message_id,
             text=message_text,
             reply_markup=inline_keyboards.today_stats_keyboard)
-
-
-async def artist_top5_callback_handler(callback):
-    await callback.answer()
 
 
 async def artist_callback_handler(callback):
@@ -156,12 +148,7 @@ async def artist_callback_handler(callback):
 
 
 async def callback_handler(callback):
-    try:
-        mode, obj_id, method = parse_callback(callback.data)
-    except:
-        mode = ''
-        obj_id = callback.data
-        method = 'send'
+    mode, obj_id, method = parse_callback(callback.data)
 
     if mode == 'album':
         if method == 'download':
@@ -185,11 +172,18 @@ async def callback_handler(callback):
             album = await deezer_api.getalbum(obj_id)
             return await methods.send_album(album, callback.message.chat)    
 
-    else:
-        try:
-            if utils.already_downloading(int(obj_id)):
-                return await callback.answer('already downloading, please wait...')
-        finally:
+    elif mode == 'track_deezer':
+        if utils.already_downloading(int(obj_id)):
+            return await callback.answer('already downloading, please wait...')
+        else:
             await callback.answer('downloading...')
             track = await deezer_api.gettrack(obj_id)
+            await methods.send_track(track, callback.message.chat)
+
+    elif mode == 'track_soundcloud':
+        if utils.already_downloading(int(obj_id)):
+            return await callback.answer('already downloading, please wait...')
+        else:
+            await callback.answer('already downloading, please wait...')
+            track = soundcloud_api.get_track(obj_id)
             await methods.send_track(track, callback.message.chat)

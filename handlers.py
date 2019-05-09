@@ -31,14 +31,6 @@ async def quality_setting_handler(message: types.Message):
             reply_markup=inline_keyboards.quality_settings_keyboard(current_setting))
 
 
-async def soundcloud_handler(message: types.Message):
-    query = message.text.strip('/sc ')
-    search_results = await soundcloud_api.search(query, limit=50)
-    return await bot.send_message(
-        chat_id=message.chat.id, text=f'{query}:',
-        reply_markup=inline_keyboards.soundcloud_keyboard(search_results, 1))
-
-
 async def soundcloud_link_handler(message: types.Message):
     url = utils.clear_link(message)
     track = await soundcloud_api.get_track(url=url)
