@@ -43,18 +43,19 @@ async def pages_handler(callback):
     await callback.answer()
     mode, page = parse_callback(callback.data)
     q = callback.message.text[:-1]
-    if mode == 'page':
-        search_results = await deezer_api.search(q=q)
-        await bot.edit_message_reply_markup(
-            chat_id=callback.message.chat.id,
-            message_id=callback.message.message_id,
-            reply_markup=inline_keyboards.search_results_keyboard(search_results, int(page)))
-    elif mode == 'sc_page':
-        search_results = await soundcloud_api.search(q=q)
-        await bot.edit_message_reply_markup(
-            chat_id=callback.message.chat.id,
-            message_id=callback.message.message_id,
-            reply_markup=inline_keyboards.sc_search_results_keyboard(search_results, int(page)))
+    with suppress(exceptions.MessageNotModified):
+        if mode == 'page':
+            search_results = await deezer_api.search(q=q)
+            await bot.edit_message_reply_markup(
+                chat_id=callback.message.chat.id,
+                message_id=callback.message.message_id,
+                reply_markup=inline_keyboards.search_results_keyboard(search_results, int(page)))
+        elif mode == 'sc_page':
+            search_results = await soundcloud_api.search(q=q)
+            await bot.edit_message_reply_markup(
+                chat_id=callback.message.chat.id,
+                message_id=callback.message.message_id,
+                reply_markup=inline_keyboards.sc_search_results_keyboard(search_results, int(page)))
 
 
 async def stats_callback_handler(callback):
