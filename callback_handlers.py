@@ -189,5 +189,5 @@ async def callback_handler(callback):
             return await callback.answer('already downloading, please wait...')
         else:
             await callback.answer('already downloading, please wait...')
-            track = soundcloud_api.get_track(obj_id)
+            track = await soundcloud_api.get_track(obj_id)
             await methods.send_track(track, callback.message.chat)
