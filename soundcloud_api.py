@@ -112,7 +112,7 @@ class SoundCloudPlaylist(AttrDict):
 async def resolve(url):
     req = await var.session.get(
         url, params={'client_id': soundcloud_client})
-    res = await req.json()
+    res = await req.json(content_type=None)
     if res['kind'] == 'user':
         return SoundCloudArtist(res)        
     elif res['kind'] == 'track':
