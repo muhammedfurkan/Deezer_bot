@@ -88,7 +88,7 @@ async def get_track(track_id=None, url=None):
 async def get_artist(artist_id=None, url=None):
     if artist_id:
         req = await var.session.get(
-            api + f'users/{artist_id}',
+            api + f'/users/{artist_id}',
             params={'client_id': soundcloud_client})
     elif url:
         req = await var.session.get(
