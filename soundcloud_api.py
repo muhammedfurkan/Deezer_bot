@@ -148,6 +148,13 @@ async def get_artist(artist_id):
     return SoundCloudArtist(result)
 
 
+@cached(TTLCache(100, 600))
+async def get_playlist(playlist_id):
+    req = await var.session.get(
+        api + f'/playlists/{playlist_id}',
+        params={'client_id': soundcloud_client})
+    result = await req.json()
+    return SoundCloudPlaylist(result)
 
 
 async def main():

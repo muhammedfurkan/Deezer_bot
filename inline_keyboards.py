@@ -84,17 +84,50 @@ def sc_search_results_keyboard(results, page, per_page=5):
         InlineKeyboardButton(text='SoundCloud ✅', callback_data=new_callback('sc_page', 1)))
     return kb
 
+
+def sc_artist_tracks_keyboard(tracks, artist_id):
+    kb = InlineKeyboardMarkup(2)
+    for i, track in enumerate(tracks, start=1):
+        kb.insert(InlineKeyboardButton(
+            f'{i+1}. {track.artist} - {track.title}',
+            callback_data=new_callback('track_soundcloud', track.id, 'send')))
+        kb.row()
+    kb.insert(InlineKeyboardButton('Go back', callback_data=new_callback('sc_artist', artist_id, 'main')))
+    return kb
+
+
+def sc_artist_playlists_keyboard(playlists, artist_id):
+    kb = InlineKeyboardMarkup(1)
+    for i, playlist in enumerate(playlists, start=1):
+        kb.insert(InlineKeyboardButton(
+            f'{i+1}. {playlist.title}',
+            callback_data=new_callback('playlist_soundcloud', playlist.id, 'send')))
+    kb.insert(InlineKeyboardButton('Go back', callback_data=new_callback('sc_artist', artist_id, 'main')))
+    return kb
+
+
+def sc_playlist_keyboard(playlist, post):
+    kb = InlineKeyboardMarkup(1)
+    for i, track in enumerate(playlist.tracks, start=1):
+        kb.insert(InlineKeyboardButton(
+            f'{i+1}. {track.artist} \u2013 {track.title}',
+            callback_data=new_callback('track_soundcloud', playlist.id, 'send')))
+    kb.insert(InlineKeyboardButton('Get all tracks', callback_data=new_callback('playlist_soundcloud', playlist.id, 'download')))
+    if post:
+        kb.insert(InlineKeyboardButton('Post', callback_data=new_callback('playlist_soundcloud', playlist.id, 'post')))
+    return kb
+
+
 def sc_artist_keyboard(artist):
     kb = InlineKeyboardMarkup(2)
     kb.insert(InlineKeyboardButton('Tracks', callback_data=new_callback('sc_artist', artist.id, 'tracks')))
     kb.insert(InlineKeyboardButton('Playlists', callback_data=new_callback('sc_artist', artist.id, 'playlists')))
-    kb.insert(InlineKeyboardButton('Albums', callback_data=new_callback('sc_artist', artist.id, 'albums')))
-    kb.insert(InlineKeyboardButton('Likes', callback_data=new_callback('sc_artist', artist.id, 'likes')))
-    kb.insert(InlineKeyboardButton('Reposts', callback_data=new_callback('sc_artist', artist.id, 'reposts')))
-    kb.insert(InlineKeyboardButton('Related artists', callback_data=new_callback('artist', artist.id, 'related')))
+    # kb.insert(InlineKeyboardButton('Albums', callback_data=new_callback('sc_artist', artist.id, 'albums')))
+    # kb.insert(InlineKeyboardButton('Likes', callback_data=new_callback('sc_artist', artist.id, 'likes')))
+    # kb.insert(InlineKeyboardButton('Reposts', callback_data=new_callback('sc_artist', artist.id, 'reposts')))
+    # kb.insert(InlineKeyboardButton('Related artists', callback_data=new_callback('artist', artist.id, 'related')))
     kb.insert(InlineKeyboardButton('Search on Last.Fm', url=str(URL(f'https://www.last.fm/search?q={artist.username}'))))
     return kb
-
 
 
 def artist_keyboard(artist):

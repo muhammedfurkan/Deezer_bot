@@ -99,6 +99,12 @@ def register_handlers(dp, handlers, inline_handlers, callback_handlers):
         callback_handlers.today_stats_callback_handler,
         lambda d: d.data == 'today')
     dp.register_callback_query_handler(
+        callback_handlers.sc_artist_callback_handler,
+        lambda d: 'sc_artist' in d.data)
+    dp.register_callback_query_handler(
+        callback_handlers.sc_callback_handler,
+        lambda d: 'soundcloud' in d.data)
+    dp.register_callback_query_handler(
         callback_handlers.artist_callback_handler,
         lambda d: 'artist' in d.data)
     dp.register_callback_query_handler(callback_handlers.callback_handler)

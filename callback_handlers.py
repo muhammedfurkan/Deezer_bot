@@ -1,4 +1,5 @@
 from contextlib import suppress
+import traceback
 
 from aiogram import exceptions, types
 
@@ -87,68 +88,105 @@ async def today_stats_callback_handler(callback):
             reply_markup=inline_keyboards.today_stats_keyboard)
 
 
+async def sc_callback_handler(callback):
+    print(callback.data)
+    await callback.answer()
+    mode, obj_id, method = parse_callback(callback.data)
+    keyboard = None
+
+    if mode == 'playlist_soundcloud':
+        playlist = await soundcloud_api.get_playlist(obj_id)
+
+        if method == 'send':
+            return await methods.send_soundcloud_playlist(
+                callback.message.chat.id, playlist)
+
+        elif method == 'download':
+            return await methods.send_soundcloud_playlist(
+                callback.message.chat.id, playlist, pic=False, send_all=True)
+
+
+
+async def sc_artist_callback_handler(callback):
+    print(callback.data)
+    await callback.answer()
+    _, obj_id, method = parse_callback(callback.data)
+    artist = await soundcloud_api.get_artist(obj_id)
+
+    if method == 'main':
+        keyboard = inline_keyboards.sc_artist_keyboard(artist)
+
+    elif method == 'tracks':
+        tracks = await artist.get_tracks()
+        keyboard = inline_keyboards.sc_artist_tracks_keyboard(tracks, artist.id)
+
+    elif method == 'playlists':
+        playlists = await artist.get_playlists()
+        keyboard = inline_keyboards.sc_artist_playlists_keyboard(playlists, artist.id)
+
+    return await bot.edit_message_reply_markup(
+        callback.message.chat.id,
+        callback.message.message_id,
+        reply_markup=keyboard)
+
+
 async def artist_callback_handler(callback):
     await callback.answer()
     print(callback.data)
-    if ':' in callback.data:
-        mode, obj_id, method = parse_callback(callback.data)
-    else:
-        mode = ''
-        obj_id = callback.data
+    _, obj_id, method = parse_callback(callback.data)
 
-    if mode == 'artist':
+    artist = await deezer_api.getartist(obj_id)
+    if method == 'top5':
+        top = await artist.top(5)
+        return await bot.edit_message_reply_markup(
+            chat_id=callback.message.chat.id,
+            message_id=callback.message.message_id,
+            reply_markup=inline_keyboards.top5_keyboard(artist, top))
+
+    elif method == 'albums':
+        albums = await artist.albums()
+        return await bot.edit_message_reply_markup(
+            chat_id=callback.message.chat.id,
+            message_id=callback.message.message_id,
+            reply_markup=inline_keyboards.albums_keyboard(artist, albums))
+
+    elif method == 'related':
+        related = await artist.related()
+        return await bot.edit_message_reply_markup(
+            chat_id=callback.message.chat.id,
+            message_id=callback.message.message_id,
+            reply_markup=inline_keyboards.related_artists_keyboard(
+                related, artist.id))
+
+    elif method == 'radio':
+        radio = await artist.radio()
+        return await bot.edit_message_reply_markup(
+            chat_id=callback.message.chat.id,
+            message_id=callback.message.message_id,
+            reply_markup=inline_keyboards.artist_radio_keyboard(
+                radio, artist.id))
+
+    elif method == 'main':
+        kboard = inline_keyboards.artist_keyboard(artist)
+        return await bot.edit_message_reply_markup(
+            chat_id=callback.message.chat.id,
+            message_id=callback.message.message_id,
+            reply_markup=kboard)
+
+    elif method == 'send':
+        return await bot.send_photo(
+            chat_id=callback.message.chat.id,
+            photo=artist.picture_xl,
+            caption=f'[{artist.name}]({artist.share})',
+            parse_mode='markdown',
+            reply_markup=inline_keyboards.artist_keyboard(artist))
+
+    elif method == 'wiki':
         artist = await deezer_api.getartist(obj_id)
-        if method == 'top5':
-            top = await artist.top(5)
-            return await bot.edit_message_reply_markup(
-                chat_id=callback.message.chat.id,
-                message_id=callback.message.message_id,
-                reply_markup=inline_keyboards.top5_keyboard(artist, top))
-
-        elif method == 'albums':
-            albums = await artist.albums()
-            return await bot.edit_message_reply_markup(
-                chat_id=callback.message.chat.id,
-                message_id=callback.message.message_id,
-                reply_markup=inline_keyboards.albums_keyboard(artist, albums))
-
-        elif method == 'related':
-            related = await artist.related()
-            return await bot.edit_message_reply_markup(
-                chat_id=callback.message.chat.id,
-                message_id=callback.message.message_id,
-                reply_markup=inline_keyboards.related_artists_keyboard(
-                    related, artist.id))
-
-        elif method == 'radio':
-            radio = await artist.radio()
-            return await bot.edit_message_reply_markup(
-                chat_id=callback.message.chat.id,
-                message_id=callback.message.message_id,
-                reply_markup=inline_keyboards.artist_radio_keyboard(
-                    radio, artist.id))
-
-        elif method == 'main':
-            kboard = inline_keyboards.artist_keyboard(artist)
-            return await bot.edit_message_reply_markup(
-                chat_id=callback.message.chat.id,
-                message_id=callback.message.message_id,
-                reply_markup=kboard)
-
-        elif method == 'send':
-            return await bot.send_photo(
-                chat_id=callback.message.chat.id,
-                photo=artist.picture_xl,
-                caption=f'[{artist.name}]({artist.share})',
-                parse_mode='markdown',
-                reply_markup=inline_keyboards.artist_keyboard(artist))
-
-        elif method == 'wiki':
-            artist = await deezer_api.getartist(obj_id)
-            r = await bot.session.get(
-                f'https://wikipedia.org/w/index.php?search={artist.name}')
-            return await bot.send_message(
-                callback.message.chat.id, r.url)
+        r = await bot.session.get(
+            f'https://wikipedia.org/w/index.php?search={artist.name}')
+        return await bot.send_message(
+            callback.message.chat.id, r.url)
 
 
 async def callback_handler(callback):

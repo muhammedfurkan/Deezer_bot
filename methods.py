@@ -201,3 +201,19 @@ async def send_soundcloud_artist(chat_id, artist):
 		caption=f'[{artist.username}]({artist.permalink_url})',
 		parse_mode='markdown',
 		reply_markup=inline_keyboards.sc_artist_keyboard(artist))
+
+
+async def send_soundcloud_playlist(chat_id, playlist, pic=True, send_all=False):
+	if pic:
+		if not send_all:
+			markup = inline_keyboards.sc_playlist_keyboard(
+				playlist, chat_id in config.admins)
+		else:
+			markup = None
+		await bot.send_photo(
+			chat_id, playlist.artwork_url, reply_markup=markup,
+			caption=f'{playlist.user.username} \u2013 {playlist.title}')
+	if send_all:
+		for track in playlist.tracks:
+			print(track.title)
+			await send_soundcloud_track(chat_id, track)
