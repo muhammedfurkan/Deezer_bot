@@ -14,7 +14,7 @@ import inline_keyboards
 import config
 from bot import bot
 from logger import file_download_logger, format_name, sent_message_logger
-from utils import already_downloading, calling_queue
+from utils import already_downloading, calling_queue, get_file
 from var import var
 from userbot import post_large_track
 
@@ -185,7 +185,7 @@ async def send_soundcloud_track(chat_id, track):
 		return await bot.send_audio(chat_id, file_id)
 
 	await bot.send_chat_action(chat_id, 'upload_audio')
-	thumb = await utils.get_file(track.thumb_url)
+	thumb = await  get_file(track.thumb_url)
 	msg = await bot.send_audio(
 		chat_id=chat_id,
 		audio=types.InputFile(path),
