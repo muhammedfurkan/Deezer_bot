@@ -25,7 +25,7 @@ async def api_call(obj, obj_id, method='', **params):
     req = await var.session.get(
         api + f'/{obj}/{obj_id}/{method}',
         params={'client_id': soundcloud_client, **params})
-    return await req.json(content_type=None)
+    return await req.json()
 
 
 class SoundCloudTrack(AttrDict):
@@ -111,8 +111,8 @@ class SoundCloudPlaylist(AttrDict):
 
 async def resolve(url):
     req = await var.session.get(
-        url, params={'client_id': soundcloud_client})
-    res = await req.json(content_type=None)
+        api + '/resolve', params={'url': url, client_id': soundcloud_client})
+    res = await req.json()
     if res['kind'] == 'user':
         return SoundCloudArtist(res)        
     elif res['kind'] == 'track':
