@@ -105,7 +105,7 @@ async def download_track(track_id, quality='MP3_320'):
 	else:
 		ext = 'mp3'
 
-	print(f'Start downloading: {track.id} | {track.artist.name} - {track.title} ')
+	print(f'[Deezer] Start downloading: {track.id} | {track.artist.name} - {track.title} ')
 	track_url = decrypt.get_dl_url(private_track, quality_n)
 	os.makedirs(f'downloads/{track.id}', exist_ok=True)
 	filepath = f'downloads/{track.id}/{track.filename_safe}.{ext}'
@@ -113,7 +113,7 @@ async def download_track(track_id, quality='MP3_320'):
 	await decrypt.decrypt_track(stream, private_track, filepath)
 	cover = await track.get_max_size_cover(album)
 	utils.add_tags(filepath, track, album, cover, lyrics)
-	print(f'Finished downloading: {track.id} | {track.artist.name} - {track.title} ')	
+	print(f'[Deezer] Finished downloading: {track.id} | {track.artist.name} - {track.title} ')	
 	file_download_logger.info(f'[downloaded track {track.id}] {track}')
 	return filepath
 
