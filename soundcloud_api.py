@@ -76,23 +76,23 @@ class SoundCloudArtist(AttrDict):
         return self['avatar_url'].replace('large', 't500x500')
 
     async def get_tracks(self, limit=200):
-        res = await api_call('user', self.id, 'tracks', limit=limit)
+        res = await api_call('users', self.id, 'tracks', limit=limit)
         return [SoundCloudTrack(track) for track in res]
 
     async def get_likes(self, limit=200):
-        res = await api_call('user', self.id, 'likes', limit=limit)
+        res = await api_call('users', self.id, 'likes', limit=limit)
         return [SoundCloudTrack(track) for track in res]
 
     async def get_reposts(self, limit=200):
-        res = await api_call('user', self.id, 'reposts', limit=limit)
+        res = await api_call('users', self.id, 'reposts', limit=limit)
         return [SoundCloudTrack(track) for track in res]
 
     async def get_playlists(self, limit=200):
-        res = await api_call('user', self.id, 'playlists', limit=limit)
+        res = await api_call('users', self.id, 'playlists', limit=limit)
         return [SoundCloudPlaylist(playist) for playist in res]
 
     async def get_albums(self, limit=200):
-        res = await api_call('user', self.id, 'albums', limit=limit)
+        res = await api_call('users', self.id, 'albums', limit=limit)
         return [SoundCloudPlaylist(album) for album in res]
 
 
