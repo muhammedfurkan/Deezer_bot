@@ -121,6 +121,8 @@ async def resolve(url):
         return SoundCloudArtist(res)        
     elif res['kind'] == 'track':
         return SoundCloudTrack(res)
+    elif res['kind'] == 'playlist':
+        return SoundCloudPlaylist(res)
 
 
 @cached(TTLCache(100, 600))
