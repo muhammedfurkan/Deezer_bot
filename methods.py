@@ -213,9 +213,14 @@ async def send_soundcloud_playlist(chat_id, playlist, pic=True, send_all=False):
 				playlist, chat_id in config.admins)
 		else:
 			markup = None
-		await bot.send_photo(
-			chat_id, playlist.artwork_url, reply_markup=markup,
-			caption=f'{playlist.user.username} \u2013 {playlist.title}')
+		try:
+			await bot.send_photo(
+				chat_id, playlist.artwork_url, reply_markup=markup,
+				caption=f'{playlist.user.username} \u2013 {playlist.title}')
+		except exceptions.BadRequest:
+			await bot.send_photo(
+				chat_id, playlist.tracks[0].artwork_url, reply_markup=markup,
+				caption=f'{playlist.user.username} \u2013 {playlist.title}')
 	if send_all:
 		for track in playlist.tracks:
 			print(track.title)
