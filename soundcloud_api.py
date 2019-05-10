@@ -37,7 +37,9 @@ class SoundCloudTrack(AttrDict):
     async def download(self, filepath=None):
         if not filepath:
             os.makedirs(f'downloads/{self.id}', exist_ok=True)
-            filepath = f'downloads/{self.id}/ ' + f'{self.user.username} - {self.title}.mp3'.replace('/', '_')
+            filepath = \
+                f'downloads/{self.id}/ ' + \
+                f'{self.user.username} - {self.title}'.replace('/', '_')[:97] + '.mp3'
         else:
             os.makedirs(filepath.rsplit('/', 1)[0], exist_ok=True)
 
@@ -74,12 +76,26 @@ async def get_track(track_id=None, url=None):
         req = await var.session.get(
             api + f'/tracks/{track_id}',
             params={'client_id': soundcloud_client})
-    else:
+    elif url:
         req = await var.session.get(
             api + f'/resolve',
             params={'url': url, 'client_id': soundcloud_client})
     result = await req.json()
     return SoundCloudTrack(result)
+
+
+@cached(TTLCache(100, 600))
+async def get_artist(artist_id=None, url=None):
+    if artist_id:
+        req = await var.session.get(
+            api + f'users/{artist_id}',
+            params={'client_id': soundcloud_client})
+    elif url:
+        req = await var.session.get(
+            api + f'/resolve',
+            params={'url': url, 'client_id': soundcloud_client})
+    result = await req.json()
+    return AttrDict(result)
 
 
 async def main():
