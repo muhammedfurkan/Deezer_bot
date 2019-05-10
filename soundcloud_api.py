@@ -62,6 +62,7 @@ class SoundCloudTrack(AttrDict):
     def artwork_url(self):
         return self['artwork_url'].replace('large', 't500x500')
 
+    @property 
     def thumb_url(self):
         return self['artwork_url']
 
