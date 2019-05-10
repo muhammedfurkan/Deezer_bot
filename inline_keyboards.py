@@ -86,12 +86,12 @@ def sc_search_results_keyboard(results, page, per_page=5):
 
 
 def sc_artist_tracks_keyboard(tracks, artist_id):
-    kb = InlineKeyboardMarkup(2)
-    for i, track in enumerate(tracks, start=1):
+    kb = InlineKeyboardMarkup(1)
+    for i, track in enumerate(tracks[:97], start=1):
         kb.insert(InlineKeyboardButton(
             f'{i+1}. {track.title}',
             callback_data=new_callback('track_soundcloud', track.id, 'send')))
-        kb.row()
+    kb.insert(InlineKeyboardButton('Get all tracks', callback_data=new_callback('sc_artist', artist_id, 'download')))
     kb.insert(InlineKeyboardButton('Go back', callback_data=new_callback('sc_artist', artist_id, 'main')))
     return kb
 

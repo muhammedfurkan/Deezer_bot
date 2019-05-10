@@ -1,5 +1,6 @@
 from contextlib import suppress
 import traceback
+from asyncio import sleep
 
 from aiogram import exceptions, types
 
@@ -130,6 +131,13 @@ async def sc_artist_callback_handler(callback):
     elif method == 'playlists':
         playlists = await artist.get_playlists()
         keyboard = inline_keyboards.sc_artist_playlists_keyboard(playlists, artist.id)
+
+    elif method == 'download':
+        tracks = await artist.get_tracks()
+        for track in tracks:
+            await methods.send_soundcloud_track(callback.message.chat.id, track)
+            await sleep(.3)
+        return
 
     return await bot.edit_message_reply_markup(
         callback.message.chat.id,
