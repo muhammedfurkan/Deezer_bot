@@ -38,6 +38,8 @@ async def soundcloud_link_handler(message: types.Message):
         await methods.send_soundcloud_track(message.chat.id, result)
     elif result.kind == 'user':
         await methods.send_soundcloud_artist(message.chat.id, result)
+    elif result.kind == 'playlist':
+        await methods.send_soundcloud_playlist(message.chat.idm result)
 
 
 
