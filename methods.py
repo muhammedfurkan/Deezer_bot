@@ -185,11 +185,13 @@ async def send_soundcloud_track(chat_id, track):
 		return await bot.send_audio(chat_id, file_id)
 
 	await bot.send_chat_action(chat_id, 'upload_audio')
+	thumb = await utils.get_file(track.thumb_url)
 	msg = await bot.send_audio(
 		chat_id=chat_id,
 		audio=types.InputFile(path),
 		performer=track.artist,
-		title=track.title)
+		title=track.title,
+		thumb=types.InputFile(thumb))
 	await db_utils.add_sc_track(track.id, msg.audio.file_id)
 	shutil.rmtree(path.rsplit('/', 1)[0])
 
