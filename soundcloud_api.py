@@ -20,6 +20,14 @@ api_v2 = 'https://api-v2.soundcloud.com'
 split = re.compile(r'([^\-\–\—\⸺~]+) [\-–—⸺~] (.*)$')
 
 
+@cached(TTLCache(100, 600))
+async def api_call(obj, obj_id, method='', **params):
+    req = await var.session.get(
+        api + f'/{obj}/{obj_id}/{method}',
+        params={'client_id': soundcloud_client, **params})
+    return await req.json()
+
+
 class SoundCloudTrack(AttrDict):
     def __init__(self, mapping):
         super().__init__(mapping)
@@ -59,6 +67,58 @@ class SoundCloudTrack(AttrDict):
         return int(self['duration'] / 1000)
 
 
+class SoundCloudArtist(AttrDict):
+    def __init__(self, mapping):
+        super().__init__(mapping)
+
+    @property
+    def avatar_url(self):
+        return self['avatar_url'].replace('large', 't500x500')
+
+    async def get_tracks(self, limit=200):
+        res = api_call('user', self.id, 'tracks', limit=limit)
+        return [SoundCloudTrack(track) for track in res]
+
+    async def get_likes(self, limit=200):
+        res = api_call('user', self.id, 'likes', limit=limit)
+        return [SoundCloudTrack(track) for track in res]
+
+    async def get_reposts(self, limit=200):
+        res = api_call('user', self.id, 'reposts', limit=limit)
+        return [SoundCloudTrack(track) for track in res]
+
+    async def get_playlists(self, limit=200):
+        res = api_call('user', self.id, 'playlists', limit=limit)
+        return [SoundCloudPlaylist(playist) for playist in res]
+
+    async def get_albums(self, limit=200):
+        res = api_call('user', self.id, 'albums', limit=limit)
+        return [SoundCloudPlaylist(album) for album in res]
+
+
+class SoundCloudPlaylist(AttrDict):
+    def __init__(self, mapping):
+        super().__init__(mapping)
+
+    @property
+    def tracks(self):
+        return [SoundCloudTrack(track) for track in self['tracks']]
+
+    @property
+    def artwork_url(self):
+        return self['artwork_url'].replace('large', 't500x500')
+        
+
+async def resolve(url):
+    req = await var.session.get(
+        url, params={'client_id': soundcloud_client})
+    res = await req.json()
+    if res['kind'] == 'user':
+        return SoundCloudArtist(res)        
+    elif res['kind'] == 'track':
+        return SoundCloudTrack(res)
+
+
 @cached(TTLCache(100, 600))
 async def search(q, limit=200, **params):
     req = await var.session.get(
@@ -71,31 +131,23 @@ async def search(q, limit=200, **params):
 
 
 @cached(TTLCache(100, 600))
-async def get_track(track_id=None, url=None):
-    if track_id:
-        req = await var.session.get(
-            api + f'/tracks/{track_id}',
-            params={'client_id': soundcloud_client})
-    elif url:
-        req = await var.session.get(
-            api + f'/resolve',
-            params={'url': url, 'client_id': soundcloud_client})
+async def get_track(track_id):
+    req = await var.session.get(
+        api + f'/tracks/{track_id}',
+        params={'client_id': soundcloud_client})
     result = await req.json()
     return SoundCloudTrack(result)
 
 
 @cached(TTLCache(100, 600))
-async def get_artist(artist_id=None, url=None):
-    if artist_id:
-        req = await var.session.get(
-            api + f'/users/{artist_id}',
-            params={'client_id': soundcloud_client})
-    elif url:
-        req = await var.session.get(
-            api + f'/resolve',
-            params={'url': url, 'client_id': soundcloud_client})
+async def get_artist(artist_id):
+    req = await var.session.get(
+        api + f'/users/{artist_id}',
+        params={'client_id': soundcloud_client})
     result = await req.json()
-    return AttrDict(result)
+    return SoundCloudArtist(result)
+
+
 
 
 async def main():

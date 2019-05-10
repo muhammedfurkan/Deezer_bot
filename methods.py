@@ -192,3 +192,12 @@ async def send_soundcloud_track(chat_id, track):
 		title=track.title)
 	await db_utils.add_sc_track(track.id, msg.audio.file_id)
 	shutil.rmtree(path.rsplit('/', 1)[0])
+
+
+async def send_soundcloud_artist(chat_id, artist):
+	await bot.send_photo(
+		chat_id=chat_id,
+		photo=artist.avatar_url,
+		caption=f'[{artist.username}]({artist.permalink_url})',
+		parse_mode='markdown',
+		reply_markup=inline_keyboards.artist_keyboard(artist))

@@ -33,8 +33,12 @@ async def quality_setting_handler(message: types.Message):
 
 async def soundcloud_link_handler(message: types.Message):
     url = utils.clear_link(message)
-    track = await soundcloud_api.get_track(url=url)
-    await methods.send_soundcloud_track(message.chat.id, track)
+    result = await soundcloud_api.resolve(url)
+    if result.kind == 'track':
+        await methods.send_soundcloud_track(message.chat.id, result)
+    elif result.kind == 'user':
+        await methods.send_soundcloud_artist(message.chat.id, result)
+
 
 
 async def audio_file_handler(message: types.Message):

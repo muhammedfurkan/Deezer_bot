@@ -84,6 +84,18 @@ def sc_search_results_keyboard(results, page, per_page=5):
         InlineKeyboardButton(text='SoundCloud ✅', callback_data=new_callback('sc_page', 1)))
     return kb
 
+def sc_artist_keyboard(artist):
+    kb = InlineKeyboardMarkup(2)
+    kb.insert(InlineKeyboardButton('Tracks', callback_data=new_callback('sc_artist', artist.id, 'tracks')))
+    kb.insert(InlineKeyboardButton('Playlists', callback_data=new_callback('sc_artist', artist.id, 'playlists')))
+    kb.insert(InlineKeyboardButton('Albums', callback_data=new_callback('sc_artist', artist.id, 'albums')))
+    kb.insert(InlineKeyboardButton('Likes', callback_data=new_callback('sc_artist', artist.id, 'likes')))
+    kb.insert(InlineKeyboardButton('Reposts', callback_data=new_callback('sc_artist', artist.id, 'reposts')))
+    kb.insert(InlineKeyboardButton('Related artists', callback_data=new_callback('artist', artist.id, 'related')))
+    kb.insert(InlineKeyboardButton('Search on Last.Fm', url=str(URL(f'https://www.last.fm/search?q={artist.username}'))))
+    return kb
+
+
 
 def artist_keyboard(artist):
     kb = InlineKeyboardMarkup(2)
