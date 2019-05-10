@@ -25,7 +25,7 @@ async def api_call(obj, obj_id, method='', **params):
     req = await var.session.get(
         api + f'/{obj}/{obj_id}/{method}',
         params={'client_id': soundcloud_client, **params})
-    return await req.json()
+    return await req.json(content_type=None)
 
 
 class SoundCloudTrack(AttrDict):
