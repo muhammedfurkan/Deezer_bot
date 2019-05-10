@@ -106,6 +106,11 @@ async def sc_callback_handler(callback):
             return await methods.send_soundcloud_playlist(
                 callback.message.chat.id, playlist, pic=False, send_all=True)
 
+        elif method == 'post':
+            return await methods.send_soundcloud_playlist(
+                -1001171972924, playlist, send_all=True)
+
+
     elif mode == 'track_soundcloud':
         if utils.already_downloading(int(obj_id)):
             return await callback.answer('already downloading, please wait...')
