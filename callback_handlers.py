@@ -90,11 +90,11 @@ async def today_stats_callback_handler(callback):
 
 async def sc_callback_handler(callback):
     print(callback.data)
-    await callback.answer()
     mode, obj_id, method = parse_callback(callback.data)
     keyboard = None
 
     if mode == 'playlist_soundcloud':
+        await callback.answer()
         playlist = await soundcloud_api.get_playlist(obj_id)
 
         if method == 'send':
@@ -105,6 +105,13 @@ async def sc_callback_handler(callback):
             return await methods.send_soundcloud_playlist(
                 callback.message.chat.id, playlist, pic=False, send_all=True)
 
+    elif mode == 'track_soundcloud':
+        if utils.already_downloading(int(obj_id)):
+            return await callback.answer('already downloading, please wait...')
+        else:
+            await callback.answer('downloading...')
+            track = await soundcloud_api.get_track(obj_id)
+            await methods.send_soundcloud_track(callback.message.chat.id, track)
 
 
 async def sc_artist_callback_handler(callback):
@@ -221,11 +228,3 @@ async def callback_handler(callback):
             await callback.answer('downloading...')
             track = await deezer_api.gettrack(obj_id)
             await methods.send_track(track, callback.message.chat)
-
-    elif mode == 'track_soundcloud':
-        if utils.already_downloading(int(obj_id)):
-            return await callback.answer('already downloading, please wait...')
-        else:
-            await callback.answer('downloading...')
-            track = await soundcloud_api.get_track(obj_id)
-            await methods.send_soundcloud_track(callback.message.chat.id, track)
