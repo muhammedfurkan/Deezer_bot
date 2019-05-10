@@ -152,8 +152,11 @@ def add_tags(path, track, album, image, lyrics):
     tag.artist = track['artist']['name']
     tag.album = track['album']['title']
     tag.album_artist = album['artist']['name']
-    tag.original_release_date = track['album']['release_date']
-    tag.recording_date = int(track['album']['release_date'].split('-')[0])
+    try:
+        tag.original_release_date = track['album']['release_date']
+        tag.recording_date = int(track['album']['release_date'].split('-')[0])
+    except:
+        pass
     tag.title = track['title']
     tag.track_num = track['track_position']
     tag.disc_num = track['disk_number']
