@@ -53,7 +53,7 @@ class SoundCloudTrack(AttrDict):
 
         print(f'[Soundcloud] Start downloading: {self.id} | {self.artist} - {self.title}')
         await download_file(await self.download_url(), filepath)
-        cover = await get_file(self.artwork_url)
+        cover = await get_file(self.artwork_url) if self.artwork_url else None
         sc_add_tags(filepath, self, cover)
         print(f'[Soundcloud] Finished downloading: {self.id} | {self.artist} - {self.title}')
         return filepath

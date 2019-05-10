@@ -185,6 +185,7 @@ def sc_add_tags(path, track, image, lyrics=None):
     tag.non_std_genre = track.get('genre', '')
     if lyrics:
         tag.lyrics.set(lyrics)
-    tag.images.set(
-        type_=3, img_data=image, mime_type='image/png')
+    if image:
+        tag.images.set(
+            type_=3, img_data=image, mime_type='image/png')
     tag.save()
