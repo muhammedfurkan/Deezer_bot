@@ -200,4 +200,4 @@ async def send_soundcloud_artist(chat_id, artist):
 		photo=artist.avatar_url,
 		caption=f'[{artist.username}]({artist.permalink_url})',
 		parse_mode='markdown',
-		reply_markup=inline_keyboards.artist_keyboard(artist))
+		reply_markup=inline_keyboards.sc_artist_keyboard(artist))

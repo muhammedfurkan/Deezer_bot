@@ -1,21 +1,18 @@
 import asyncio
-import glob
 import random
-import string
 import os
 from asyncio import sleep
 from asyncache import cached
 from cachetools import TTLCache
 from contextlib import suppress
-from time import time
 
 import decrypt
 from AttrDict import AttrDict
 from logger import error_logger, file_download_logger
 import utils
 from var import var
+from config import deezer_private_cookies, deezer_private_headers
 
-chars = string.ascii_uppercase + string.digits
 unofficial_api_url = 'https://www.deezer.com/ajax/gw-light.php'
 api_url = 'https://api.deezer.com'
 
@@ -44,7 +41,10 @@ async def private_api_call(method, **json_req):
 		'input': 3,
 		'cid': get_api_cid(),
 		'method': method}
-	r = await var.session.post(unofficial_api_url, params=context, json=json_req)
+	r = await var.session.post(
+		unofficial_api_url, params=context,
+		json=json_req, headers=deezer_private_headers,
+		cookies=deezer_private_cookies)
 	return (await r.json())['results']
 
 
@@ -155,7 +155,6 @@ async def getartist(artist_id):
 
 class Track(AttrDict):
 	def __init__(self, json):
-		self.time = time()
 		super().__init__(json)
 
 	@property

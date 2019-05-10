@@ -108,19 +108,6 @@ def register_handlers(dp, handlers, inline_handlers, callback_handlers):
 
 try:
     global session
-    cookies = {'arl':  config.deezer_arl_cookie}
-    headers = {
-        'user-agent':      ('Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
-                            'AppleWebKit/537.36 (KHTML, like Gecko) '
-                            'Chrome/72.0.3626.121 Safari/537.36'),
-        'Content-Language': 'en-US',
-        'Cache-control':   'max-age=0',
-        'Accept-Language': 'en-US,en;q=0.9,en-US;q=0.8,en;q=0.7',
-        'Accept-Charset':  'utf-8,ISO-8859-1;q=0.8,*;q=0.7',
-        # 'content-type':    'application/json;text/plain;charset=UTF-8',
-        'Connection': 'keep-alive',
-    }
-
     bot = Bot(token=config.bot_token, loop=loop)
     storage = MemoryStorage()
     dp = Dispatcher(bot, storage=storage)
