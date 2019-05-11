@@ -174,7 +174,7 @@ async def request_get(url, *args, **kwargs):
     retries_count = 0
     while True:
         try:
-            result = await request_get(url, *args, **kwargs)
+            result = await var.session.get(url, *args, **kwargs)
         except Exception as err:
             retries_count += 1
             if retries_count > 3:
