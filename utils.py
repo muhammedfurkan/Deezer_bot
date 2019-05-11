@@ -170,7 +170,6 @@ def sc_add_tags(path, track, image, lyrics=None):
     tag.save()
 
 
-@calling_queue(15)
 async def request_get(url, *args, **kwargs):
     retries_count = 0
     while True:
@@ -184,7 +183,6 @@ async def request_get(url, *args, **kwargs):
             return result
 
 
-@calling_queue(15)
 async def request_post(url, *args, **kwargs):
     retries_count = 0
     while True:
