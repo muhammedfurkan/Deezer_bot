@@ -106,30 +106,9 @@ def calling_queue(size):
     return wrapper
 
 
-def retry(*exceptions, retries=3, cooldown=1):
-    def wrap(func):
-        @wraps(func)
-        async def inner(*args, **kwargs):
-            retries_count = 0
-
-            while True:
-                try:
-                    result = await func(*args, **kwargs)
-                except exceptions as err:
-                    retries_count += 1
-                    if retries_count > retries:
-                        raise ValueError('Number of retries exceeded') from err
-                    if cooldown:
-                        await asyncio.sleep(cooldown)
-                else:
-                    return result
-        return inner
-    return wrap
-
-
 @calling_queue(10)
 async def download_file(url, path):
-    r = await var.session.get(url)  # pylint: disable=no-member
+    r = await request_get(url)  # pylint: disable=no-member
     async with aiofiles.open(path, 'wb') as f:
         async for chunk in r.content.iter_chunked(2048):
             await f.write(chunk)
@@ -137,7 +116,7 @@ async def download_file(url, path):
 
 @calling_queue(10)
 async def get_file(url, total_size=None):
-    r = await var.session.get(url)  # pylint: disable=no-member
+    r = await request_get(url)  # pylint: disable=no-member
     return await r.content.read()
 
 
@@ -189,3 +168,31 @@ def sc_add_tags(path, track, image, lyrics=None):
         tag.images.set(
             type_=3, img_data=image, mime_type='image/png')
     tag.save()
+
+
+@calling_queue(15)
+async def request_get(url, *args, **kwargs):
+    retries_count = 0
+    while True:
+        try:
+            result = await request_get(url, *args, **kwargs)
+        except Exception as err:
+            retries_count += 1
+            if retries_count > 3:
+                raise ValueError('Number of retries exceeded') from err
+        else:
+            return result
+
+
+@calling_queue(15)
+async def request_post(url, *args, **kwargs):
+    retries_count = 0
+    while True:
+        try:
+            result = await var.session.post(url, *args, **kwargs)
+        except Exception as err:
+            retries_count += 1
+            if retries_count > 3:
+                raise ValueError('Number of retries exceeded') from err
+        else:
+            return result

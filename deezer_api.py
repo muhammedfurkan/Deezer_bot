@@ -10,6 +10,7 @@ import decrypt
 from AttrDict import AttrDict
 from logger import error_logger, file_download_logger
 import utils
+from utils import request_get, request_post
 from var import var
 from config import deezer_private_cookies, deezer_private_headers
 
@@ -41,7 +42,7 @@ async def private_api_call(method, **json_req):
 		'input': 3,
 		'cid': get_api_cid(),
 		'method': method}
-	r = await var.session.post(
+	r = await request_post(
 		unofficial_api_url, params=context,
 		json=json_req, headers=deezer_private_headers,
 		cookies=deezer_private_cookies)
@@ -49,7 +50,7 @@ async def private_api_call(method, **json_req):
 
 
 async def api_call(obj_name, obj_id, method='', errcount=0, **params):
-	r = await var.session.get(f'{api_url}/{obj_name}/{obj_id}/{method}', params=params)
+	r = await request_get(f'{api_url}/{obj_name}/{obj_id}/{method}', params=params)
 	obj = AttrDict(await r.json())
 	if obj.error:
 		if errcount > 2:
@@ -58,7 +59,7 @@ async def api_call(obj_name, obj_id, method='', errcount=0, **params):
 				f'\n{r.url}')
 
 		url = f'https://deezer.com/{obj_name}/{obj_id}/'
-		r = await var.session.get(url)
+		r = await request_get(url)
 		new_id = str(r.url).split('/')[-1]
 		return await api_call(obj_name, new_id, method, errcount + 1, **params)
 
@@ -74,7 +75,7 @@ async def api_call(obj_name, obj_id, method='', errcount=0, **params):
 @cached(TTLCache(100, 600))
 async def search(obj='track', q=''):
 	encoded_url = utils.encode_url(f'{api_url}/search/{obj}/', {'q': q, 'limit': 50})
-	results = await (await var.session.get(encoded_url)).json()
+	results = await (await request_get(encoded_url)).json()
 	try:
 		if obj == 'artist':
 			result = [Artist(result) for result in results['data']]
@@ -170,7 +171,7 @@ class Track(AttrDict):
 
 	async def get_max_size_cover(self, album):
 		url = album.cover_xl.rsplit('/', 1)[0] + '/1500x1500.png'
-		r = await var.session.get(url)
+		r = await request_get(url)
 		res = await r.content.read()
 		if len(res) < 100:
 			raise ValueError('Cant download album cover')
@@ -192,7 +193,7 @@ class Album(AttrDict):
 
 	async def get_tracks(self):
 		tracks = []
-		r = await var.session.get(self.tracklist)
+		r = await request_get(self.tracklist)
 		json = await r.json()
 		for track in json['data']:
 			tracks.append(Track(track))

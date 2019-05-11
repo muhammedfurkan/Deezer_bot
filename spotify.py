@@ -4,7 +4,7 @@ import re
 from time import time
 
 from AttrDict import AttrDict
-from utils import encode_url
+from utils import encode_url, request_get
 from var import var
 
 spotify_track = re.compile(r'open.spotify.com/track/[^? ]+')
@@ -37,7 +37,7 @@ class Spotify_API:
 			self.restart()
 		data = {'type': obj_type, 'limit': limit, 'q': query}
 		headers = {'Authorization': f'Bearer {self.token}'}
-		r = await var.session.get(encode_url(
+		r = await request_get(encode_url(
 			'https://api.spotify.com/v1/search', data=data), headers=headers)
 		json = await r.json(content_type=None)
 		result = []
@@ -54,7 +54,7 @@ class Spotify_API:
 		url = re.findall(spotify_track, url)[0]
 		url = 'https://' + url
 		track_id = url.split('/')[-1]
-		r = await var.session.get(
+		r = await request_get(
 			f'https://api.spotify.com/v1/tracks/{track_id}',
 			headers={'Authorization': f'Bearer {self.token}'})
 		print(r.url)
@@ -72,7 +72,7 @@ class Spotify_API:
 			self.restart()
 		url = re.findall(spotify_playlist, url)[0]
 		playlist_id = url.split('/')[-1]
-		r = await var.session.get(
+		r = await request_get(
 			f'https://api.spotify.com/v1/playlists/{playlist_id}/tracks',
 			headers={'Authorization': f'Bearer {self.token}'})
 		print(r.url)
@@ -87,7 +87,7 @@ class Spotify_API:
 			self.restart()
 		url = re.findall(spotify_album, url)[0]
 		album_id = url.split('/')[-1]
-		r = await var.session.get(
+		r = await request_get(
 			f'https://api.spotify.com/v1/albums/{album_id}',
 			headers={'Authorization': f'Bearer {self.token}'})
 		print(r.url)
@@ -103,7 +103,7 @@ class Spotify_API:
 			self.restart()
 		url = re.findall(spotify_artist, url)[0]
 		artist_id = url.split('/')[-1]
-		r = await var.session.get(
+		r = await request_get(
 			f'https://api.spotify.com/v1/artists/{artist_id}',
 			json={'Authorization': f'Bearer {self.token}'})
 		print(r.url)

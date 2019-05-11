@@ -7,7 +7,7 @@ import aiofiles
 from aiostream.stream import enumerate as asyncenumerate
 
 from var import var
-from utils import calling_queue
+from utils import calling_queue, request_get
 
 
 def get_blowfish_key(SNG_ID):
@@ -26,7 +26,7 @@ async def dl_and_decrypt_track(url, SNG_ID, filename):
     SNG_ID = str(SNG_ID).encode('ascii')
     blowfish_key = get_blowfish_key(SNG_ID)
     async with aiofiles.open(filename, 'wb') as filestream:
-        r = await var.session.get(url) # pylint: disable=no-member
+        r = await request_get(url) # pylint: disable=no-member
         async for i, chunk in asyncenumerate(r.content.iter_chunked(2048)):
             if i % 3 or len(chunk) < 2048:
                 await filestream.write(chunk)

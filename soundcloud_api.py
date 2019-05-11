@@ -11,7 +11,7 @@ from cachetools import TTLCache
 
 from AttrDict import AttrDict
 from config import soundcloud_client
-from utils import download_file, get_file, sc_add_tags
+from utils import download_file, get_file, sc_add_tags, request_get
 import bot
 from var import var
 
@@ -22,7 +22,7 @@ split = re.compile(r'([^\-\–\—\⸺~]+) [\-–—⸺~] (.*)$')
 
 @cached(TTLCache(100, 600))
 async def api_call(obj, obj_id, method='', **params):
-    req = await var.session.get(
+    req = await request_get(
         api + f'/{obj}/{obj_id}/{method}',
         params={'client_id': soundcloud_client, **params})
     return await req.json()
@@ -37,7 +37,7 @@ class SoundCloudTrack(AttrDict):
             self.artist, self.title = mapping['user']['username'], mapping['title']
 
     async def download_url(self):
-        r = await var.session.get(
+        r = await request_get(
             api + f'/tracks/{self.id}/stream',
             params={'client_id': soundcloud_client})
         return r.url
@@ -114,7 +114,7 @@ class SoundCloudPlaylist(AttrDict):
         
 
 async def resolve(url):
-    req = await var.session.get(
+    req = await request_get(
         api + '/resolve', params={'url': url, 'client_id': soundcloud_client})
     res = await req.json()
     if res['kind'] == 'user':
@@ -127,7 +127,7 @@ async def resolve(url):
 
 @cached(TTLCache(100, 600))
 async def search(q, limit=200, **params):
-    req = await var.session.get(
+    req = await request_get(
         api_v2 + '/search/tracks',
         params={
             'q': q, 'client_id': soundcloud_client,
@@ -138,7 +138,7 @@ async def search(q, limit=200, **params):
 
 @cached(TTLCache(100, 600))
 async def get_track(track_id):
-    req = await var.session.get(
+    req = await request_get(
         api + f'/tracks/{track_id}',
         params={'client_id': soundcloud_client})
     result = await req.json()
@@ -147,7 +147,7 @@ async def get_track(track_id):
 
 @cached(TTLCache(100, 600))
 async def get_artist(artist_id):
-    req = await var.session.get(
+    req = await request_get(
         api + f'/users/{artist_id}',
         params={'client_id': soundcloud_client})
     result = await req.json()
@@ -156,7 +156,7 @@ async def get_artist(artist_id):
 
 @cached(TTLCache(100, 600))
 async def get_playlist(playlist_id):
-    req = await var.session.get(
+    req = await request_get(
         api + f'/playlists/{playlist_id}',
         params={'client_id': soundcloud_client})
     result = await req.json()

@@ -121,10 +121,6 @@ try:
     timeout = aiohttp.ClientTimeout(total=10*60)
     connector = aiohttp.TCPConnector(limit=20)
     var.session = aiohttp.ClientSession(raise_for_status=True, timeout=timeout, connector=connector)
-    # var.session.get = utils.retry(
-    #     aiohttp.ClientResponseError, retries=5, cooldown=0.1)(var.session.get)
-    # var.session.post = utils.retry(
-    #     aiohttp.ClientResponseError, retries=5, cooldown=0.1)(var.session.post)
     print('created session')
     var.CSRFToken = None
     var.loop = loop
