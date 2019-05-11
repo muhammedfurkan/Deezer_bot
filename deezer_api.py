@@ -164,7 +164,7 @@ class Track(AttrDict):
 			track_number = '0' + str(self.track_position)
 		else:
 			track_number = str(self.track_position)
-		return f'{track_number} {self.artist.name} - {self.title}'.replace('/', '_')[:200]
+		return f'{track_number} {self.artist.name} - {self.title}'.replace('/', '_')[:200].strip()
 
 	async def download(self, quality='MP3_320'):
 		return await download_track(self.id, quality)
