@@ -118,7 +118,8 @@ try:
     storage = MemoryStorage()
     dp = Dispatcher(bot, storage=storage)
     var.downloading = {}
-    var.session = aiohttp.ClientSession(raise_for_status=True)
+    timeout = aiohttp.ClientTimeout(total=10*60)
+    var.session = aiohttp.ClientSession(raise_for_status=True, timeout=timeout)
     var.session.get = utils.retry(
         aiohttp.ClientResponseError, retries=5, cooldown=0.1)(var.session.get)
     var.session.post = utils.retry(
