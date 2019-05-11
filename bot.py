@@ -118,9 +118,7 @@ try:
     storage = MemoryStorage()
     dp = Dispatcher(bot, storage=storage)
     var.downloading = {}
-    timeout = aiohttp.ClientTimeout(total=10*60)
-    connector = aiohttp.TCPConnector(limit=20)
-    var.session = aiohttp.ClientSession(raise_for_status=True, timeout=timeout, connector=connector)
+    var.session = aiohttp.ClientSession(raise_for_status=True)
     print('created session')
     var.CSRFToken = None
     var.loop = loop

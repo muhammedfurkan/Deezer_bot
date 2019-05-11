@@ -210,6 +210,7 @@ async def artist_callback_handler(callback):
 
 
 async def callback_handler(callback):
+    print(callback.data)
     mode, obj_id, method = parse_callback(callback.data)
 
     if mode == 'album':
