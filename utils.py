@@ -6,16 +6,18 @@ import re
 import string
 from asyncio import sleep
 from collections import namedtuple
+from concurrent.futures._base import TimeoutError
 from datetime import date
 from functools import wraps
 from time import time
 
 import aiofiles
+import aiohttp
 import mutagen
 from aiogram import exceptions, types
+from eyed3 import id3
 from mutagen.easyid3 import EasyID3
 from mutagen.mp3 import MP3
-from eyed3 import id3
 from yarl import URL
 
 from var import var
@@ -170,11 +172,19 @@ def sc_add_tags(path, track, image, lyrics=None):
     tag.save()
 
 
+errcount = {'count': 0}
+
 async def request_get(url, *args, **kwargs):
     retries_count = 0
     while True:
         try:
             result = await var.session.get(url, *args, **kwargs)
+        except TimeoutError:
+            if errcount['count'] > 3:
+                exit(1)
+            await var.session.close()
+            var.session = aiohttp.ClientSession() 
+            errcount['count'] += 1
         except Exception as err:
             retries_count += 1
             if retries_count > 3:
@@ -188,6 +198,12 @@ async def request_post(url, *args, **kwargs):
     while True:
         try:
             result = await var.session.post(url, *args, **kwargs)
+        except TimeoutError:
+            if errcount['count'] > 3:
+                exit(1)
+            await var.session.close()
+            var.session = aiohttp.ClientSession()
+            errcount['count'] += 1
         except Exception as err:
             retries_count += 1
             if retries_count > 3:
