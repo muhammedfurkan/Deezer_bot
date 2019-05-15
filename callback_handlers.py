@@ -9,8 +9,9 @@ import utils
 import db_utils
 import methods
 import inline_keyboards
-import deezer_api
-import soundcloud_api
+from deezer import deezer_api
+from soundcloud import soundcloud_api, methods as sc_methods
+import soundcloud.keyboards as sc_keyboards
 from var import var
 from utils import parse_callback
 
@@ -19,7 +20,7 @@ async def soundcloud_handler(callback):
     await callback.answer()
     track_id = callback.data.split(':')[1]
     track = await soundcloud_api.get_track(track_id)
-    await methods.send_soundcloud_track(callback.message.chat.id, track)
+    await sc_methods.send_soundcloud_track(callback.message.chat.id, track)
 
 
 async def finish_download_handler(data):
@@ -57,7 +58,7 @@ async def pages_handler(callback):
             await bot.edit_message_reply_markup(
                 chat_id=callback.message.chat.id,
                 message_id=callback.message.message_id,
-                reply_markup=inline_keyboards.sc_search_results_keyboard(search_results, int(page)))
+                reply_markup=sc_keyboards.sc_search_results_keyboard(search_results, int(page)))
 
 
 async def stats_callback_handler(callback):
@@ -99,15 +100,15 @@ async def sc_callback_handler(callback):
         playlist = await soundcloud_api.get_playlist(obj_id)
 
         if method == 'send':
-            return await methods.send_soundcloud_playlist(
+            return await sc_methods.send_soundcloud_playlist(
                 callback.message.chat.id, playlist)
 
         elif method == 'download':
-            return await methods.send_soundcloud_playlist(
+            return await sc_methods.send_soundcloud_playlist(
                 callback.message.chat.id, playlist, pic=False, send_all=True)
 
         elif method == 'post':
-            return await methods.send_soundcloud_playlist(
+            return await sc_methods.send_soundcloud_playlist(
                 -1001171972924, playlist, send_all=True)
 
 
@@ -117,7 +118,7 @@ async def sc_callback_handler(callback):
         else:
             await callback.answer('downloading...')
             track = await soundcloud_api.get_track(obj_id)
-            await methods.send_soundcloud_track(callback.message.chat.id, track)
+            await sc_methods.send_soundcloud_track(callback.message.chat.id, track)
 
 
 async def sc_artist_callback_handler(callback):
@@ -127,15 +128,15 @@ async def sc_artist_callback_handler(callback):
     artist = await soundcloud_api.get_artist(obj_id)
 
     if method == 'main':
-        keyboard = inline_keyboards.sc_artist_keyboard(artist)
+        keyboard = sc_keyboards.sc_artist_keyboard(artist)
 
     elif method == 'tracks':
         tracks = await artist.get_tracks()
-        keyboard = inline_keyboards.sc_artist_tracks_keyboard(tracks, artist.id)
+        keyboard = sc_keyboards.sc_artist_tracks_keyboard(tracks, artist.id)
 
     elif method == 'playlists':
         playlists = await artist.get_playlists()
-        keyboard = inline_keyboards.sc_artist_playlists_keyboard(playlists, artist.id)
+        keyboard = sc_keyboards.sc_artist_playlists_keyboard(playlists, artist.id)
 
     elif method == 'download':
         tracks = await artist.get_tracks()

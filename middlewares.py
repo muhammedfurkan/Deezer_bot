@@ -2,7 +2,6 @@ from asyncio import sleep
 
 from aiogram.dispatcher.middlewares import BaseMiddleware
 
-import deezer_api
 from var import var
 from logger import message_logger, format_name
 

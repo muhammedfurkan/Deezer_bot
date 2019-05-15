@@ -7,11 +7,8 @@ from multiprocessing import Process
 
 
 import pyrogram
-from telethon import TelegramClient
-from telethon.tl.types import DocumentAttributeAudio
 
 import config
-import deezer_api
 import db_utils
 from bot import bot
 from var import var
@@ -41,14 +38,4 @@ async def post_large_track(path, track, quality='mp3', provider='deezer'):
         await db_utils.add_sc_track(track.id, msg.audio.file_id)
 
 
-async def test():
-    t1 = time()
-    print('starting')
-    track = await deezer_api.gettrack(366611841)
-    path = await track.download()
-    await post_large_track(path, track)
-    shutil.rmtree(path.rsplit('/', 1)[0])
-    print(f'finished in {t1-time()} seconds')
-
 loop.run_until_complete(start())
-# loop.run_until_complete(test())

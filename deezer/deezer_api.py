@@ -6,7 +6,7 @@ from asyncache import cached
 from cachetools import TTLCache
 from contextlib import suppress
 
-import decrypt
+from . import decrypt
 from AttrDict import AttrDict
 from logger import error_logger, file_download_logger
 import utils

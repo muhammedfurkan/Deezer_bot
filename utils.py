@@ -39,7 +39,7 @@ def clear_link(message):
     for entity in message.entities:
         if entity.type == 'url':
             return entity.url \
-                or message.text[entity.offset : entity.offset + entity.length]
+                or message.text[entity.offset: entity.offset + entity.length]
 
 
 def split_string(text):
@@ -162,7 +162,8 @@ def sc_add_tags(path, track, image, lyrics=None):
     tag.artist = track.artist
     tag.album = album_title
     tag.album_artist = track.artist if album_title else ''
-    tag.original_release_date = track.created_at.split('T')[0].split(' ')[0].replace('/', '-')
+    tag.original_release_date = track.created_at.split('T')[0].split(' ')[
+        0].replace('/', '-')
     tag.non_std_genre = track.get('genre', '')
     if lyrics:
         tag.lyrics.set(lyrics)
@@ -174,6 +175,7 @@ def sc_add_tags(path, track, image, lyrics=None):
 
 errcount = {'count': 0}
 
+
 async def request_get(url, *args, **kwargs):
     retries_count = 0
     while True:
@@ -183,7 +185,7 @@ async def request_get(url, *args, **kwargs):
             if errcount['count'] > 3:
                 exit(1)
             await var.session.close()
-            var.session = aiohttp.ClientSession() 
+            var.session = aiohttp.ClientSession()
             errcount['count'] += 1
         except Exception as err:
             retries_count += 1

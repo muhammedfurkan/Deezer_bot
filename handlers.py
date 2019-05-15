@@ -11,8 +11,9 @@ from bot import bot
 import utils
 import db_utils
 import inline_keyboards
-import deezer_api
-import soundcloud_api
+from deezer import deezer_api, keyboards as dz_keyboards
+from soundcloud import soundcloud_api, keyboards as cs_keyboards
+import soundcloud.methods as sc_methods
 import config
 import methods
 from logger import error_logger
@@ -35,11 +36,11 @@ async def soundcloud_link_handler(message: types.Message):
     url = utils.clear_link(message)
     result = await soundcloud_api.resolve(url)
     if result.kind == 'track':
-        await methods.send_soundcloud_track(message.chat.id, result)
+        await sc_methods.send_soundcloud_track(message.chat.id, result)
     elif result.kind == 'user':
-        await methods.send_soundcloud_artist(message.chat.id, result)
+        await sc_methods.send_soundcloud_artist(message.chat.id, result)
     elif result.kind == 'playlist':
-        await methods.send_soundcloud_playlist(message.chat.id, result)
+        await sc_methods.send_soundcloud_playlist(message.chat.id, result)
 
 
 
